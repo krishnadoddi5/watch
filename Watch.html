@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Clock and Stopwatch</title>
+    <style>
+        body {
+            margin: 0;
+            font-family: sans-serif;
+            background:linear-gradient(black,rgb(25, 187, 195))
+        }
+
+        #container {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin-bottom: 20px;
+        }
+
+        #clock {
+            font-size: 7.5em;
+            font-weight: bold;
+            text-align: center;
+            backdrop-filter: blur(5px);
+            width: 700px;
+            background: #a4bf5b;
+            border-radius: 10px;
+            padding: 20px;
+            display: none;
+        }
+    #stopwatch {
+    font-size: 4em;
+    font-weight: bold;
+    text-align: center;
+    background: #c7d895;
+    border-radius: 10px;
+    padding: 20px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    width: 1000px;
+    margin: 0 auto;  
+    display: none;  
+}
+
+#stopwatch-time {
+    font-size: 3em;
+    margin-bottom: 20px;
+    color: #333;
+}
+
+#stopwatch-controls {
+    margin-top: 30px;
+    font-size: 0.5em;
+}
+
+
+button {
+    padding: 10px 20px;
+    font-size: 1em;
+    margin: 0 5px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    background-color: #06b22c;
+    font-weight: bold;
+    color: #000000;
+    transition: background-color 0.3s ease, transform 0.2s ease;
+}
+
+button:hover {
+    background-color:  #05fb3a;
+    transform: scale(1.05);
+}
+
+button:active {
+    background-color:  #04ff3a;
+    transform: scale(0.95);
+}
+#controls{
+    margin-top: 30px;
+    
+}
+
+    </style>
+</head>
+<body>
+    <div id="container">
+        <div id="clock">00:00:00 AM</div>
+        <div id="stopwatch">
+            <div id="stopwatch-time">00:00:00</div>
+            <div id="stopwatch-controls">
+                <button id="start">Start</button>
+                <button id="stop">Stop</button>
+                <button id="reset">Reset</button>
+            </div>
+        </div>
+        <div id="controls">
+            <button id="show-clock"> Clock</button>
+            <button id="show-stopwatch">Stopwatch</button>
+        </div>
+    </div>
+
+    <script>
+        // Clock 
+        function updateClock() {
+            const now = new Date();
+            let hours = now.getHours();
+            const meridiem = hours >= 12 ? "PM" : "AM";
+            hours = hours % 12 || 12;
+            hours = hours.toString().padStart(2, '0');
+            const minutes = now.getMinutes().toString().padStart(2, '0');
+            const seconds = now.getSeconds().toString().padStart(2, '0');
+            const timeString = `${hours}:${minutes}:${seconds} ${meridiem}`;
+            document.getElementById("clock").textContent = timeString;
+        }
+        
+        updateClock();
+        setInterval(updateClock, 1000);
+
+        // Stopwatch  
+        let stopwatchInterval;
+        let stopwatchTime = 0; // time in seconds
+
+        function updateStopwatch() {
+            stopwatchTime++;
+            const hours = Math.floor(stopwatchTime / 3600).toString().padStart(2, '0');
+            const minutes = Math.floor((stopwatchTime % 3600) / 60).toString().padStart(2, '0');
+            const seconds = (stopwatchTime % 60).toString().padStart(2, '0');
+            document.getElementById("stopwatch-time").textContent = `${hours}:${minutes}:${seconds}`;
+        }
+
+        document.getElementById("start").addEventListener("click", () => {
+            if (!stopwatchInterval) { // Start only if not already running
+                stopwatchInterval = setInterval(updateStopwatch, 1000);
+            }
+        });
+
+        document.getElementById("stop").addEventListener("click", () => {
+            clearInterval(stopwatchInterval);
+            stopwatchInterval = null; // Reset interval reference
+        });
+
+        document.getElementById("reset").addEventListener("click", () => {
+            clearInterval(stopwatchInterval);
+            stopwatchInterval = null; // Reset interval reference
+            stopwatchTime = -1;
+            updateStopwatch();
+        });
+
+        // Toggle views
+        document.getElementById("show-clock").addEventListener("click", () => {
+            document.getElementById("clock").style.display = "block";
+            document.getElementById("stopwatch").style.display = "none";
+        });
+
+        document.getElementById("show-stopwatch").addEventListener("click", () => {
+            document.getElementById("clock").style.display = "none";
+            document.getElementById("stopwatch").style.display = "block";
+        });
+
+        // Show the clock by default
+        document.getElementById("clock").style.display = "block";
+    </script>
+</body>
+</html>
